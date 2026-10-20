@@ -5,6 +5,11 @@
 --  Carnet: 1810649
 --
 --  Declaración de uso de herramientas de IA (obligatoria, ver enunciado):
+--  Para poder desarrollar la tarea use el manual de Haskell para entender el uso de
+--  algunos keywords como "let-in" y "where", pero Gemini AI fue un guia para visualizar
+--  los contextos de cuando aprovecharlos, corregir mis ideas y recibir orientacion de 
+--  como solucionar algunos problemas que en este paradigma eran complicados de resolver 
+--  (por lo menos para mi) como el segundo problema y el ultimo.
 --
 -- =====================================================================
 --  No cambies el nombre del módulo ni la lista de exportación, ni las
@@ -63,11 +68,11 @@ mayorYMenor [] = Nothing
 mayorYMenor (x:xs) = Just (buscamaxmin (x, x) xs)
 
 buscamaxmin :: Ord a => (a, a) -> [a] -> (a, a)
-buscamaxmin (max, min) [] = (max, min)
-buscamaxmin (max, min) (y:ys)
-  | y > max = buscamaxmin (y, min) ys
-  | y < min = buscamaxmin (max, y) ys
-  | otherwise = buscamaxmin (max, min) ys
+buscamaxmin (mx, mn) [] = (mx, mn)
+buscamaxmin (mx, mn) (y:ys)
+  | y > mx = buscamaxmin (y, mn) ys
+  | y < mn = buscamaxmin (mx, y) ys
+  | otherwise = buscamaxmin (mx, mn) ys
 
 -- A3
 leerHora :: String -> Either String (Int, Int)
@@ -77,16 +82,17 @@ leerHora [a, b, ':', c, d]
   | minutos < 0 || minutos > 59 = Left "minutos fuera de rango"
   | otherwise = Right (horas, minutos)
   where
-    horas = read [a, b] :: Int
-    minutos = read [c, d] :: Int
+    -- para usar digitToInt descartamos la opcion del keyword read
+    horas = digitToInt a * 10 + digitToInt b
+    minutos = digitToInt c * 10 + digitToInt d
 leerHora _ = Left "formato inválido"
 
 duracion :: String -> String -> Either String Int
-duracion h1 h2 =
-  case leerHora h1 of
+duracion hora1 hora2 =
+  case leerHora hora1 of
     Left err1 -> Left err1
     Right (h1, min1) ->
-      case leerHora h2 of
+      case leerHora hora2 of
         Left err2 -> Left err2
         Right (h2, min2) -> 
           let inicio = h1 * 60 + min1
@@ -104,7 +110,7 @@ duracion h1 h2 =
 -- B1
 promedioSobreUmbral :: Double -> [Double] -> Maybe Double
 promedioSobreUmbral umbral xs = 
-  let (suma, cant) = foldl (\(s, c) x -> if x > umbral then (s + x, c + 1) else (s, c)) (0, 0) xs 
+  let (suma, cant) = foldl (\(s, c) x -> if x > umbral then (s + x, c + 1) else (s, c)) (0.0, 0 :: Int) xs 
   in if cant == 0
     then Nothing
     else Just (suma / fromIntegral cant)
@@ -118,14 +124,21 @@ movimientosCaballo (f, c) =
   ]
 
 enDosSaltos :: (Int, Int) -> Int
-enDosSaltos = undefined
+enDosSaltos pos = length (foldr insertarSinRepetir [] casillasTrasDosSaltos)
+  where
+    casillasTrasDosSaltos = [c2 | c1 <- movimientosCaballo pos, c2 <- movimientosCaballo c1]
+    -- insertarSinRepetir es para añadir un elemento en acc solo si no existe en acc
+    insertarSinRepetir x acc =
+      if length (filter (== x) acc) == 0
+        then x : acc
+        else acc
 
 -- B3
 miMap :: (a -> b) -> [a] -> [b]
-miMap = undefined
+miMap f = foldr (\x acc -> f x : acc) [] 
 
 miFilter :: (a -> Bool) -> [a] -> [a]
-miFilter = undefined
+miFilter p = foldr (\x acc -> if p x then x : acc else acc) []
 
 miFoldl :: (b -> a -> b) -> b -> [a] -> b
-miFoldl = undefined
+miFoldl f z xs = foldr (\x g acc -> g (f acc x)) id xs z
