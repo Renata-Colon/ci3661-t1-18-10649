@@ -9,7 +9,7 @@
 --  algunos keywords como "let-in" y "where", pero Gemini AI fue un guia para visualizar
 --  los contextos de cuando aprovecharlos, corregir mis ideas y recibir orientacion de 
 --  como solucionar algunos problemas que en este paradigma eran complicados de resolver 
---  (por lo menos para mi) como el segundo problema y el ultimo.
+--  (por lo menos para mi) como el segundo problema y el de miFoldl.
 --
 -- =====================================================================
 --  No cambies el nombre del módulo ni la lista de exportación, ni las
