@@ -41,15 +41,18 @@ import Data.Char (isAlphaNum, isDigit, toLower, digitToInt)
 esPalindromo :: String -> Bool
 esPalindromo s = verificarIgualdadReversa(limpiarCadena s)
 
+-- conserva solo caracteres alfanumericos y los convierte a minusculas
 limpiarCadena :: String -> String
 limpiarCadena [] = []
 limpiarCadena (x:xs)
   | isAlphaNum x = toLower x : limpiarCadena xs
   | otherwise = limpiarCadena xs
 
+-- compara una cadena con su reversa para comprobar simetria
 verificarIgualdadReversa :: String -> Bool
 verificarIgualdadReversa s = s == miReverse s
 
+-- invierte una cadena utilizando recursion
 miReverse :: String -> String
 miReverse xs = aux xs []
   where
@@ -141,4 +144,4 @@ miFilter :: (a -> Bool) -> [a] -> [a]
 miFilter p = foldr (\x acc -> if p x then x : acc else acc) []
 
 miFoldl :: (b -> a -> b) -> b -> [a] -> b
-miFoldl f z xs = foldr (\x g acc -> g (f acc x)) id xs z
+miFoldl f z xs = foldr (\x acc g -> acc (f g x)) id xs z
